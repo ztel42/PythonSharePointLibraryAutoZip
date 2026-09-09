@@ -1,21 +1,28 @@
 Overview
-This Python script connects to a SharePoint Online Library, downloads all files (including those in subfolders), and packages them into a .zip file for easy user access. It uses the Office365-REST-Python-Client library for SharePoint interactions and shutil for creating the .zip archive. The script is designed to run automatically, making it suitable for scheduled tasks.
+Downloads a SharePoint Online document library (including subfolders) and packs it into a .zip file.
 
 Prerequisites
-Before running the script, ensure you have:
+- pip install Office365-REST-Python-Client
+- Azure AD app registration with least-privilege read access to the target site/library
+- App-only client credentials (prefer certificates in production)
 
-Installed the required library: pip install Office365-REST-Python-Client.
-Registered an app in Azure AD to obtain a client ID and client secret with read permissions (e.g., Sites.Read.All) for the SharePoint site (Microsoft Documentation).
-The SharePoint site URL, library title, and a local directory for temporary storage.
-How It Works
-The script:
+Required environment variables (do not hardcode secrets):
+  SHAREPOINT_CLIENT_ID
+  SHAREPOINT_CLIENT_SECRET
+  SHAREPOINT_SITE_URL
 
-Authenticates with SharePoint using client credentials.
-Accesses the specified library and its root folder.
-Recursively downloads all files and subfolders to a temporary local directory.
-Creates a .zip file containing all downloaded files.
-Saves the .zip file for user download.
-Notes
-Replace placeholders (your_client_id, your_client_secret, etc.) with your actual credentials and SharePoint details.
-Ensure the app has appropriate permissions to avoid 403 errors (Stack Overflow).
-The script assumes all files are accessible; restricted or checked-out files may cause errors.
+Optional:
+  SHAREPOINT_LIBRARY_TITLE (default YourLibraryTitle)
+  SHAREPOINT_TEMP_DIR (default temp_download)
+  SHAREPOINT_OUTPUT_ZIP (default output.zip)
+
+Security notes
+- Never commit real client secrets. Use environment variables or a secret store.
+- Prefer app-only auth with least privilege. Do NOT disable MFA to unlock password auth.
+
+
+Changelog
+2026-09-07 — Security hardening
+- Client ID, client secret, and site URL now come from required environment variables (no hardcoded secrets in source)
+- README documents secure app-only auth and explicitly avoids MFA-disable guidance
+- Added .gitignore for .env, temp downloads, and zip outputs
